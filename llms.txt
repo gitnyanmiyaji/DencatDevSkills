@@ -4,3 +4,4 @@
 - [rigorous-execution-protocol](https://skills.dencat.dev/skills/rep/SKILL.md): Strict engineering discipline for development (REP).
 - [meta-cognition-check](https://skills.dencat.dev/skills/meta-cognition-check/SKILL.md): Structured self-assessment before execution (MCC).
 - [rtk-optimization](https://skills.dencat.dev/skills/rtk-optimization/SKILL.md): Token efficiency and context purity protocol (RTK-OP).
+- [agentic-ai](https://skills.dencat.dev/skills/agentic-ai/SKILL.md): Hub for designing and operating autonomous AI agents (GH-600 compliant).

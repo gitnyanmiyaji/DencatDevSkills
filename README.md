@@ -41,8 +41,10 @@ AIがURLを取得し、ルールを理解して即座に適用します。ファ
 
 | スキル名 | ID | 概要 |
 |---|---|---|
+| **Dencat Core** | `dencat-core` | 全スキルの司令塔（ブートローダー）。人格・記憶・基本プロトコルの同期を担う。 |
 | **Rigorous Execution Protocol** | `rep` | 厳格実行プロトコル。DoD・WBS・テスト駆動出力・ゼロハルシネーション原則を適用する。 |
 | **Meta-Cognition Check** | `meta-cognition-check` | 実行前自己評価。現在のAIモデルがタスクを解決できるか、上位モデルへのエスカレーションが必要かを判定する。 |
+| **RTK Optimization** | `rtk-optimization` | トークン効率とコンテキスト純度の最適化プロトコル。 |
 | **Agentic AI Hub** | `agentic-ai` | 自律型AIエージェントの設計・運用ハブ。Layer1/2による合意形成と、GH-600準拠のSDLC管理を実現する。 |
 
 ---
@@ -56,8 +58,12 @@ DencatDevSkills/
 ├── skills/                    # ソース：スキルファイル（SKILL.md 形式）
 │   ├── rep/
 │   │   └── SKILL.md
-│   └── meta-cognition-check/
-│       └── SKILL.md
+│   ├── meta-cognition-check/
+│   │   └── SKILL.md
+│   └── agentic-ai/
+│       ├── SKILL.md           # ハブ（エントリーポイント）
+│       ├── 01-architecture.md
+│       └── ... (02~06)
 ├── templates/                 # ビルドテンプレート（HTML・llms.txt の雛形）
 ├── build.py                   # ビルドスクリプト：skills/ から public/ を生成
 ├── public/                    # 出力：Cloudflare Pages にデプロイされる成果物
