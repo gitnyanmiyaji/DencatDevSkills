@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DencatDevSkills — AIエージェント向けスキル配信ハブ</title>
+  <meta name="description" content="dencatが設計・管理するAIエージェント向けスキル配信ハブ。インストール不要でスキルを即時適用できます。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-base:       #050810;
+      --bg-card:       rgba(10, 16, 30, 0.7);
+      --bg-glass:      rgba(15, 25, 50, 0.5);
+      --accent-blue:   #3ab4ff;
+      --accent-glow:   #1a8cff;
+      --accent-dim:    rgba(58, 180, 255, 0.15);
+      --text-primary:  #e8edf5;
+      --text-secondary:#8a9bb5;
+      --text-muted:    #4a5878;
+      --border-card:   rgba(58, 180, 255, 0.18);
+      --border-glow:   rgba(58, 180, 255, 0.5);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: 'Outfit', 'Noto Sans JP', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* === GRID BACKGROUND === */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(58,180,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(58,180,255,0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* === NAV === */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 60px;
+      background: rgba(5, 8, 16, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-card);
+    }
+
+    .nav-logo {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent-blue);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-logo .dot { width: 7px; height: 7px; background: var(--accent-blue); border-radius: 50%; box-shadow: 0 0 8px var(--accent-blue); }
+
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent-blue); }
+
+    /* === MAIN CONTENT === */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* === HERO === */
+    .hero {
+      text-align: center;
+      padding: 96px 0 64px;
+    }
+
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent-blue);
+      background: var(--accent-dim);
+      border: 1px solid var(--border-card);
+      border-radius: 100px;
+      padding: 4px 16px;
+      margin-bottom: 28px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+    }
+    .hero h1 span {
+      background: linear-gradient(135deg, #3ab4ff, #80d0ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      max-width: 520px;
+      margin: 0 auto 48px;
+      line-height: 1.7;
+      font-family: 'Noto Sans JP', sans-serif;
+      font-weight: 300;
+    }
+
+    /* === AI CALLOUT BOX === */
+    .callout {
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-glow);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin: 0 auto 80px;
+      max-width: 680px;
+      box-shadow: 0 0 40px rgba(58, 180, 255, 0.08), inset 0 1px 0 rgba(255,255,255,0.04);
+      text-align: left;
+    }
+
+    .callout-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent-blue);
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    .callout-desc {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      font-family: 'Noto Sans JP', sans-serif;
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .url-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(5, 8, 16, 0.6);
+      border: 1px solid var(--border-card);
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+
+    .url-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent-blue);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .copy-btn {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--bg-base);
+      background: var(--accent-blue);
+      border: none;
+      border-radius: 6px;
+      padding: 5px 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.2s, transform 0.1s;
+      font-family: 'Outfit', sans-serif;
+    }
+    .copy-btn:hover { opacity: 0.85; transform: scale(0.98); }
+    .copy-btn:active { transform: scale(0.95); }
+    .copy-btn.copied { background: #2ecc71; }
+
+    .callout-note {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 12px;
+      font-family: 'Noto Sans JP', sans-serif;
+    }
+    .callout-note code {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-secondary);
+      background: rgba(255,255,255,0.05);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 0.7rem;
+    }
+
+    /* === SECTION TITLE === */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .section-header h2 {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .section-header::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-card);
+    }
+
+    /* === SKILL CARDS === */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 16px;
+    }
+
+    .skill-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-card);
+      border-radius: 14px;
+      padding: 24px 28px;
+      transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .skill-card:hover {
+      border-color: var(--border-glow);
+      box-shadow: 0 0 28px rgba(58, 180, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .card-id {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+
+    .card-tag {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-blue);
+      background: var(--accent-dim);
+      border: 1px solid var(--border-card);
+      border-radius: 100px;
+      padding: 3px 10px;
+      white-space: nowrap;
+    }
+
+    .card-name {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      font-family: 'Noto Sans JP', sans-serif;
+      font-weight: 300;
+    }
+
+    .card-desc {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      font-family: 'Noto Sans JP', sans-serif;
+      line-height: 1.65;
+      flex: 1;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-card);
+    }
+
+    .card-url {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .card-copy {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--accent-blue);
+      background: var(--accent-dim);
+      border: 1px solid var(--border-card);
+      border-radius: 6px;
+      padding: 4px 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s, border-color 0.2s;
+      font-family: 'Outfit', sans-serif;
+    }
+    .card-copy:hover { background: rgba(58,180,255,0.25); border-color: var(--border-glow); }
+    .card-copy.copied { color: #2ecc71; border-color: rgba(46,204,113,0.4); background: rgba(46,204,113,0.1); }
+
+    /* === DEV FLOW MAP === */
+    .flow-section {
+      margin-bottom: 64px;
+    }
+
+    .flow-track {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      margin-bottom: 32px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .flow-step {
+      flex: 1;
+      min-width: 100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .flow-step-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    /* connector line */
+    .flow-step:not(:last-child) .flow-node::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: calc(100% + 1px);
+      height: 1px;
+      background: var(--border-card);
+      transform: translateY(-50%);
+      z-index: 0;
+    }
+
+    .flow-node {
+      position: relative;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--border-card);
+      background: var(--bg-base);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      z-index: 1;
+      transition: border-color 0.2s, color 0.2s;
+      margin-bottom: 8px;
+    }
+
+    .flow-label {
+      font-size: 0.68rem;
+      font-family: 'Noto Sans JP', sans-serif;
+      color: var(--text-muted);
+      text-align: center;
+      white-space: nowrap;
+      line-height: 1.3;
+    }
+
+    /* skill activation bars */
+    .flow-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 24px;
+    }
+
+    .flow-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    .flow-bar-label {
+      width: 48px;
+      flex-shrink: 0;
+      font-size: 0.65rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent-blue);
+      text-align: right;
+      padding-right: 12px;
+    }
+
+    .flow-bar-cells {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+    }
+
+    .flow-cell {
+      height: 24px;
+      border-left: 1px solid rgba(58,180,255,0.08);
+    }
+    .flow-cell:last-child { border-right: 1px solid rgba(58,180,255,0.08); }
+
+    .flow-cell.active {
+      background: rgba(58, 180, 255, 0.15);
+      border-top: 1px solid var(--border-glow);
+      border-bottom: 1px solid var(--border-glow);
+    }
+    .flow-cell.active:first-child { border-left: 2px solid var(--accent-blue); border-radius: 4px 0 0 4px; }
+    .flow-cell.active:last-child,
+    .flow-cell.active + .flow-cell:not(.active) { border-right: 2px solid var(--accent-blue); }
+    .flow-cell.active + .flow-cell:not(.active) { background: transparent; border-top: none; border-bottom: none; }
+
+    .flow-bar-note {
+      width: 160px;
+      flex-shrink: 0;
+      font-size: 0.65rem;
+      font-family: 'Noto Sans JP', sans-serif;
+      color: var(--text-muted);
+      padding-left: 14px;
+      line-height: 1.35;
+    }
+
+    /* === FOOTER === */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 40px 24px;
+      border-top: 1px solid var(--border-card);
+    }
+
+    footer p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-family: 'Noto Sans JP', sans-serif;
+      line-height: 1.8;
+    }
+
+    footer .sig {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-style: italic;
+      margin-top: 4px;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 640px) {
+      nav { padding: 0 20px; }
+      .nav-links { gap: 16px; }
+      .skills-grid { grid-template-columns: 1fr; }
+      .hero { padding: 60px 0 40px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="nav-logo">
+      <span class="dot"></span>
+      DencatDevSkills
+    </a>
+    <div class="nav-links">
+      <a href="/">ホーム</a>
+      <a href="https://github.com/gitnyanmiyaji/DencatDevSkills" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://dencat.dev" target="_blank" rel="noopener">dencat.dev</a>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-eyebrow">AI Skill Distribution Hub</div>
+      <h1>AIに、<span>新しい行動規律を</span></h1>
+      <p class="hero-sub">
+        インストール不要。URLを渡すだけで、AIエージェントに高精度なスキルを即時適用できます。
+      </p>
+    </section>
+
+    <!-- CALLOUT -->
+    <div class="callout">
+      <div class="callout-title">🤖 AIへの渡し方</div>
+      <p class="callout-desc">以下のメッセージをAIとの会話にそのまま貼り付けてください。</p>
+      <div class="url-row">
+        <span class="url-text" id="hero-url-text">「https://skills.dencat.dev/skills/dencat-core/SKILL.md にあるスキルを読み込んで、その指示に従ってください。」</span>
+        <button class="copy-btn" id="hero-copy-btn" onclick="copyText('hero-url-text','hero-copy-btn')">コピー</button>
+      </div>
+      <p class="callout-note">AIエージェント向けの全スキル索引 → <code>https://skills.dencat.dev/llms.txt</code></p>
+    </div>
+
+    <!-- DEV FLOW MAP -->
+    <div class="flow-section">
+      <div class="section-header">
+        <h2>スキルの効きどころ</h2>
+      </div>
+
+      <!-- Phase nodes -->
+      <div class="flow-track">
+        <div class="flow-step">
+          <div class="flow-step-inner">
+            <div class="flow-node">1</div>
+            <div class="flow-label">タスク<br>受領</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-inner">
+            <div class="flow-node">2</div>
+            <div class="flow-label">計画<br>WBS</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-inner">
+            <div class="flow-node">3</div>
+            <div class="flow-label">実装</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-inner">
+            <div class="flow-node">4</div>
+            <div class="flow-label">テスト<br>検証</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-step-inner">
+            <div class="flow-node">5</div>
+            <div class="flow-label">完了<br>レビュー</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Skill activation bars -->
+      <div class="flow-bars">
+        <!-- MCC: fires only at phase 1 -->
+        <div class="flow-bar-row">
+          <div class="flow-bar-label">MCC</div>
+          <div class="flow-bar-cells">
+            <div class="flow-cell active"></div>
+            <div class="flow-cell"></div>
+            <div class="flow-cell"></div>
+            <div class="flow-cell"></div>
+            <div class="flow-cell"></div>
+          </div>
+          <div class="flow-bar-note">タスク開始前に「できるか？」を判定。NO-GOなら即中止。</div>
+        </div>
+        <!-- REP: fires at phases 2–5 -->
+        <div class="flow-bar-row">
+          <div class="flow-bar-label">REP</div>
+          <div class="flow-bar-cells">
+            <div class="flow-cell"></div>
+            <div class="flow-cell active"></div>
+            <div class="flow-cell active"></div>
+            <div class="flow-cell active"></div>
+            <div class="flow-cell active"></div>
+          </div>
+          <div class="flow-bar-note">計画〜完了まで全フェーズを厳格に管理。ハルシネーション禁止。</div>
+        </div>
+        <!-- RTK: constant -->
+        <div class="flow-bar-row">
+          <div class="flow-bar-label">RTK</div>
+          <div class="flow-bar-cells">
+            <div class="flow-cell active"></div>
+            <div class="flow-cell active"></div>
+            <div class="flow-cell active"></div>
+            <div class="flow-cell active"></div>
+            <div class="flow-cell active"></div>
+          </div>
+          <div class="flow-bar-note">全工程でトークンを節約し、コンテキストの純度を維持。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SKILL CATALOG -->
+    <div class="section-header">
+      <h2>公開スキル</h2>
+    </div>
+
+    <div class="skills-grid">
+ 
+      <!-- DCO -->
+      <div class="skill-card">
+        <div class="card-top">
+          <div>
+            <div class="card-id">DCO</div>
+            <div class="card-name">Dencat Core Orchestrator</div>
+          </div>
+          <span class="card-tag">Bootloader</span>
+        </div>
+        <p class="card-desc">
+          全スキルを統括するマスタープロトコル。REP, MCC, RTK-OP を状況に応じて自動的に呼び出し、エージェントを最高性能へと導きます。
+        </p>
+        <div class="card-footer">
+          <span class="url-text card-url" id="dco-url">skills.dencat.dev/skills/dencat-core/SKILL.md</span>
+          <button class="card-copy" id="dco-copy" onclick="copyCard('dco-url','dco-copy','https://skills.dencat.dev/skills/dencat-core/SKILL.md')">URLをコピー</button>
+        </div>
+      </div>
+
+      <!-- REP -->
+      <div class="skill-card">
+        <div class="card-top">
+          <div>
+            <div class="card-id">REP</div>
+            <div class="card-name">Rigorous Execution Protocol</div>
+          </div>
+          <span class="card-tag">Execution</span>
+        </div>
+        <p class="card-desc">
+          厳格実行プロトコル。DoD・WBS・テスト駆動出力・ゼロハルシネーション原則を適用し、AIを「実行エンジン」として機能させます。
+        </p>
+        <div class="card-footer">
+          <span class="url-text card-url" id="rep-url">skills.dencat.dev/skills/rep/SKILL.md</span>
+          <button class="card-copy" id="rep-copy" onclick="copyCard('rep-url','rep-copy','https://skills.dencat.dev/skills/rep/SKILL.md')">URLをコピー</button>
+        </div>
+      </div>
+
+      <!-- MCC -->
+      <div class="skill-card">
+        <div class="card-top">
+          <div>
+            <div class="card-id">MCC</div>
+            <div class="card-name">Meta-Cognition Check</div>
+          </div>
+          <span class="card-tag">Safety</span>
+        </div>
+        <p class="card-desc">
+          実行前自己評価プロトコル。AIがタスクを解決できるか事前に判定し、GO / CONDITIONAL / NO-GO を明示します。
+        </p>
+        <div class="card-footer">
+          <span class="url-text card-url" id="mcc-url">skills.dencat.dev/skills/meta-cognition-check/SKILL.md</span>
+          <button class="card-copy" id="mcc-copy" onclick="copyCard('mcc-url','mcc-copy','https://skills.dencat.dev/skills/meta-cognition-check/SKILL.md')">URLをコピー</button>
+        </div>
+      </div>
+
+      <!-- RTK -->
+      <div class="skill-card">
+        <div class="card-top">
+          <div>
+            <div class="card-id">RTK</div>
+            <div class="card-name">RTK Optimization Protocol</div>
+          </div>
+          <span class="card-tag">Efficiency</span>
+        </div>
+        <p class="card-desc">
+          トークン効率化プロトコル。<b>Rust Token Killer (RTK)</b> の活用や実行結果の要約を徹底し、長時間の対話でもエージェントの知能を維持します。<br>
+          <small style="color:var(--text-muted); font-size: 0.7rem;">Includes software developed by <a href="https://github.com/rtk-ai/rtk" target="_blank" style="color:inherit;">rtk-ai/rtk</a> (Apache-2.0)</small>
+        </p>
+        <div class="card-footer">
+          <span class="url-text card-url" id="rtk-url">skills.dencat.dev/skills/rtk-optimization/SKILL.md</span>
+          <button class="card-copy" id="rtk-copy" onclick="copyCard('rtk-url','rtk-copy','https://skills.dencat.dev/skills/rtk-optimization/SKILL.md')">URLをコピー</button>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>スキルの開発・改善には AI 支援ツールを積極的に活用しています。</p>
+    <p>MIT License &nbsp;·&nbsp; <a href="https://github.com/gitnyanmiyaji/DencatDevSkills" style="color:var(--text-secondary);text-decoration:none;">GitHub</a></p>
+    <p class="sig">— dencat</p>
+  </footer>
+
+  <script>
+    function copyText(textId, btnId) {
+      const text = document.getElementById(textId).textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById(btnId);
+        btn.textContent = 'コピー済！';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'コピー'; btn.classList.remove('copied'); }, 2000);
+      });
+    }
+
+    function copyCard(textId, btnId, url) {
+      navigator.clipboard.writeText(url).then(() => {
+        const btn = document.getElementById(btnId);
+        btn.textContent = 'コピー済！';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'URLをコピー'; btn.classList.remove('copied'); }, 2000);
+      });
+    }
+  </script>
+
+</body>
+</html>

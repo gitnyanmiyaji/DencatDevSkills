@@ -43,6 +43,7 @@ AIがURLを取得し、ルールを理解して即座に適用します。ファ
 |---|---|---|
 | **Rigorous Execution Protocol** | `rep` | 厳格実行プロトコル。DoD・WBS・テスト駆動出力・ゼロハルシネーション原則を適用する。 |
 | **Meta-Cognition Check** | `meta-cognition-check` | 実行前自己評価。現在のAIモデルがタスクを解決できるか、上位モデルへのエスカレーションが必要かを判定する。 |
+| **Agentic AI Hub** | `agentic-ai` | 自律型AIエージェントの設計・運用ハブ。Layer1/2による合意形成と、GH-600準拠のSDLC管理を実現する。 |
 
 ---
 
@@ -107,7 +108,11 @@ AIエージェントへの具体的な指示...
 
 ## 📜 ライセンス
 
-特記なき限り、本リポジトリのスキルは **MIT ライセンス** のもとで公開されています。  
+## ⚖️ License & Credits
+
+This project includes software developed by **Rust Token Killer (RTK)** ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk)), which is licensed under the **Apache License 2.0**.
+
+特記なき限り、その他のスキルは **MIT ライセンス** のもとで公開されています。  
 自由に使用・改変・再配布できます。`dencat` へのクレジット表記は歓迎します。
 
 ---

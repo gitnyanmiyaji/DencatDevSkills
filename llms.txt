@@ -1,0 +1,6 @@
+# DencatDevSkills Index
+
+- [dencat-core](https://skills.dencat.dev/skills/dencat-core/SKILL.md): The central orchestrator for all dencat skills (Bootloader).
+- [rigorous-execution-protocol](https://skills.dencat.dev/skills/rep/SKILL.md): Strict engineering discipline for development (REP).
+- [meta-cognition-check](https://skills.dencat.dev/skills/meta-cognition-check/SKILL.md): Structured self-assessment before execution (MCC).
+- [rtk-optimization](https://skills.dencat.dev/skills/rtk-optimization/SKILL.md): Token efficiency and context purity protocol (RTK-OP).
